@@ -43,7 +43,6 @@ body {
 }
 .text-bold {
     font-weight: 600;
-    text-transform: capitalize;
 }
 a {
     text-decoration: none;

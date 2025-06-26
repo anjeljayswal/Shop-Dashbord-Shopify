@@ -66,6 +66,23 @@ app.get("/api/products/count", async (_req, res) => {
   res.status(200).send({ count: countData.data.productsCount.count });
 });
 
+//read collection information
+app.get("/api/collections/count", async (_req, res) => {
+  const countData = await shopify.api.rest.CustomCollection.count({
+    session: res.locals.shopify.session,
+  });
+  res.status(200).send({ count: countData });
+});
+//reading orders  data
+app.get("/api/orders/all", async (_req, res) => {
+  const countData = await shopify.api.rest.Order.count({
+    session: res.locals.shopify.session,
+    status: "any",
+  });
+  res.status(200).send({ count: countData });
+});
+
+
 app.post("/api/products", async (_req, res) => {
   let status = 200;
   let error = null;
