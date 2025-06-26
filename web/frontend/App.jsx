@@ -3,16 +3,16 @@ import { useTranslation } from "react-i18next";
 import { NavMenu } from "@shopify/app-bridge-react";
 import Routes from "./Routes";
 
-import { QueryProvider, PolarisProvider,NavigationBar } from "./components";
+import { QueryProvider, PolarisProvider, NavigationBar, TopBar } from "./components";
 // import NavigationBar from "./components/NavigationBar";
 
 export default function App() {
   // Any .tsx or .jsx files in /pages will become a route
   // See documentation for <Routes /> for more info
-const pages = import.meta.glob('./pages/**/*.[jt]sx', {
-  eager: true,
-  // ignore: ['**/*.test.*']
-});  const { t } = useTranslation();
+  const pages = import.meta.glob('./pages/**/*.[jt]sx', {
+    eager: true,
+    // ignore: ['**/*.test.*']
+  }); const { t } = useTranslation();
 
   return (
     <PolarisProvider>
@@ -24,9 +24,10 @@ const pages = import.meta.glob('./pages/**/*.[jt]sx', {
           </NavMenu>
           <div className="main-section">
             <div className="menu-section">
-                <NavigationBar/>
+              <NavigationBar />
             </div>
             <div className="content-section">
+              <TopBar />
               <Routes pages={pages} />
             </div>
           </div>
