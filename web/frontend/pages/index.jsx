@@ -3,21 +3,25 @@ import {
   LegacyCard,
   Page,
 } from "@shopify/polaris";
-import { Ordersgraphs } from "../components";
+import { Card, Ordersgraphs } from "../components";
 
 export default function HomePage() {
   return (
     <Page fullWidth>
       <div className="home-section">
         <div className="graphs-section">
-          <Ordersgraphs/>
-          
-          
+          <Ordersgraphs />
         </div>
-       
-      
-      <div className="cards-section"></div>
-      <div className="order-details-section"></div>
+        <div className="cards-section">
+          <Layout>
+            <Card title="Order" />
+            <Card title="Order" />
+            <Card title="Order" />
+            <Card title="Order" />
+            <Card title="Order" />
+          </Layout>
+        </div>
+        <div className="order-details-section"></div>
       </div>
     </Page>
   );
