@@ -3,7 +3,7 @@
 client_id = "f4dc4a34b585131c3f317006c7189853"
 name = "shop-dashboard"
 handle = "shop-dashboard-24"
-application_url = "https://initially-need-display-nuke.trycloudflare.com"
+application_url = "https://fg-western-decade-carriers.trycloudflare.com"
 embedded = true
 
 [build]
@@ -18,7 +18,7 @@ api_version = "2025-04"
 scopes = "write_products,read_products,read_orders"
 
 [auth]
-redirect_urls = ["https://initially-need-display-nuke.trycloudflare.com/auth/callback", "https://initially-need-display-nuke.trycloudflare.com/auth/shopify/callback", "https://initially-need-display-nuke.trycloudflare.com/api/auth/callback"]
+redirect_urls = ["https://fg-western-decade-carriers.trycloudflare.com/auth/callback", "https://fg-western-decade-carriers.trycloudflare.com/auth/shopify/callback", "https://fg-western-decade-carriers.trycloudflare.com/api/auth/callback"]
 
 [pos]
 embedded = false

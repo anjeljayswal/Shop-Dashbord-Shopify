@@ -4,8 +4,26 @@ import {
   Page,
 } from "@shopify/polaris";
 import { Card, OrderDetails, Ordersgraphs } from "../components";
+import { useEffect, useState } from "react";
 
 export default function HomePage() {
+  const [product, setProduct] = useState(0)
+  async function fetchData() {
+    // Fetch data or perform side effects here
+    try {
+      const request = await fetch("/api/products/count");
+      let response = await request.json();
+      setProduct(response.count);
+      console.log("Product count:", response.count);
+    } catch (error) {
+      console.error("Error fetching product count:", error);
+    }
+  }
+
+  useEffect(async () => {
+    // Fetch data or perform side effects here
+    fetchData();
+  }, []);
   return (
     <Page fullWidth>
       <div className="home-section">
@@ -14,11 +32,11 @@ export default function HomePage() {
         </div>
         <div className="cards-section">
           <Layout>
-            <Card title="Order" />
-            <Card title="Order" />
-            <Card title="Order" />
-            <Card title="Order" />
-            <Card title="Order" />
+            <Card title="Total Order" />
+            <Card title="Fulfilled Order" />
+            <Card title="Remains Order" />
+            <Card title="Total Order" data={product} productsCard />
+            <Card title="Total collection" />
           </Layout>
         </div>
         <div className="order-details-section">

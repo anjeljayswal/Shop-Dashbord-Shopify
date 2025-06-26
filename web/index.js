@@ -39,6 +39,17 @@ app.use("/api/*", shopify.validateAuthenticatedSession());
 
 app.use(express.json());
 
+// ..read shop information
+app.get("/api/store/info", async (req, res) => {
+  let storeInfo = await shopify.api.rest.Shop.all({
+    session: res.locals.shopify.session,
+  })
+  res.status(200).send(storeInfo);
+});
+
+
+
+
 app.get("/api/products/count", async (_req, res) => {
   const client = new shopify.api.clients.Graphql({
     session: res.locals.shopify.session,
@@ -73,7 +84,7 @@ app.use(shopify.cspHeaders());
 app.use(serveStatic(STATIC_PATH, { index: false }));
 
 app.use("/*", shopify.ensureInstalledOnShop(), async (_req, res, _next) => {
-  return res
+  res
     .status(200)
     .set("Content-Type", "text/html")
     .send(
