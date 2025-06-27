@@ -1,0 +1,42 @@
+<!-- app-form.liquid 
+  <button class="app-btn">Click</button>
+
+-->
+<div class="app-form">
+  <h1 style="text-align:{{block.settings.alignment}};">{{ block.settings.form_title }}</h1>
+  <form type="app-form">
+    <div class="username">
+        <label for="username">Your name</label>
+        <input type="text" name="username" id="username"/>
+    </div>
+    <div class="email">
+        <label for="email">E-mail</label>
+        <input type="email" name="email" id="email"/>
+    </div>
+    <input type="submit" value="Register Yourself"/>
+  </form>
+</div>
+
+{% schema %}
+{
+  "name": "App Registration Form",
+  "target": "section",
+  "class": "app-dashboard-form",
+  "stylesheet": "app-form.css",
+  "javascript": "app-form.js",
+  "settings": [
+    {
+      "type": "text",
+      "id": "form_title",
+      "label": "App Form Title"
+    },{
+        "type": "text_alignment",
+      "id": "alignment",
+      "label": "Text alignment",
+      "default":"center"
+
+    }
+
+  ]
+}
+{% endschema %}
