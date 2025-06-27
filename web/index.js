@@ -36,8 +36,25 @@ app.post(
 // also add a proxy rule for them in web/frontend/vite.config.js
 
 app.use("/api/*", shopify.validateAuthenticatedSession());
+app.use("/userdata/*", authenticateUser);
+async function authenticateUser(req, res, next) {
+  let shop = req.query.shop;
+  let storeName= await shopify.config.sessionStorage.findSessionsByShop(shop);
+  console.log('storeName: ', storeName);
+  if(shop === storeName[0].shop) {    
+    next();
+  }else{
+    res.send("User not authenticated"); 
+  }
+
+}
 
 app.use(express.json());
+//getting storefront data
+app.get("/userdata/userinfo", async (req, res) => {
+  // ..read user information
+  res.status(200).send("Store data sent successfully.");
+});
 
 // ..read shop information
 app.get("/api/store/info", async (req, res) => {
