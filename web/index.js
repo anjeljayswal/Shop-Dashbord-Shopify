@@ -105,6 +105,18 @@ app.post("/userdata/userinfo", async (req, res) => {
     }
   }
 });
+
+app.get("/api/getusers", async(req, res) => {
+  try {
+    let users = await User.find({});
+    // console.log('users: ', users);
+    res.status(200).send(users);
+  }catch(error) {
+    console.log(error)
+  }
+});
+
+
 // ..read shop information
 app.get("/api/store/info", async (req, res) => {
   let storeInfo = await shopify.api.rest.Shop.all({
