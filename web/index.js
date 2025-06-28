@@ -7,6 +7,8 @@ import serveStatic from "serve-static";
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
 import PrivacyWebhookHandlers from "./privacy.js";
+import mongoose from "mongoose";
+import { esES } from "@mui/material/locale";
 
 const PORT = parseInt(
   process.env.BACKEND_PORT || process.env.PORT || "3000",
@@ -37,19 +39,40 @@ app.post(
 
 app.use("/api/*", shopify.validateAuthenticatedSession());
 app.use("/userdata/*", authenticateUser);
+app.use(express.json());
+// 1. connection to mongodb
+// 2 create a schema 
+// 3 models
+// 4 crud operations  
+
+mongoose.connect("mongodb://localhost:27017/shopify")
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((err) => {
+    console.error("Error connecting to MongoDB:", err);
+  });
+
+let userSchema = new mongoose.Schema({
+  username: { type: String, required: true },
+  useremail: { type: String, required: true, unique: true },
+
+});
+let User = mongoose.model("userData", userSchema);
+
+
 async function authenticateUser(req, res, next) {
   let shop = req.query.shop;
-  let storeName= await shopify.config.sessionStorage.findSessionsByShop(shop);
+  let storeName = await shopify.config.sessionStorage.findSessionsByShop(shop);
   console.log('storeName: ', storeName);
-  if(shop === storeName[0].shop) {    
+  if (shop === storeName[0].shop) {
     next();
-  }else{
-    res.send("User not authenticated"); 
+  } else {
+    res.send("User not authenticated");
   }
 
 }
 
-app.use(express.json());
 //getting storefront data
 // app.get("/userdata/userinfo", async (req, res) => {
 //   // ..read user information
@@ -64,11 +87,23 @@ app.use(express.json());
 app.post("/userdata/userinfo", async (req, res) => {
   // ..read user information
   const userData = req.body;
-  console.log('Received user data:', userData);
-
-  // You can add your logic here
-  res.status(200).json({ message: "Store data received", data: userData });
-
+  // console.log('Received user data:', userData);
+  try {
+    let createdUser = await User.create({
+      username: userData[0],
+      useremail: userData[1],
+    });
+    console.log("User created successfully:", createdUser);
+    res.status(201).json({ message: "User created successfully", data: createdUser });
+  } catch (error) {
+    if (error.code === 11000) {
+      // Duplicate key error
+      res.status(400).json({ message: "User already exists" });
+    } else {
+      console.error("Error creating user:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
 });
 // ..read shop information
 app.get("/api/store/info", async (req, res) => {
