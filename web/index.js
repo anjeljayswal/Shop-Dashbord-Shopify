@@ -51,11 +51,25 @@ async function authenticateUser(req, res, next) {
 
 app.use(express.json());
 //getting storefront data
-app.get("/userdata/userinfo", async (req, res) => {
-  // ..read user information
-  res.status(200).send("Store data sent successfully.");
-});
+// app.get("/userdata/userinfo", async (req, res) => {
+//   // ..read user information
+//   // const userData = req.body;
+//   // console.log('Received user data:', userData);
 
+//   // You can add your logic here
+//   // res.status(200).json({ message: "Store data received", data: userData });
+//     res.status(200).send("Store data received" );
+
+// });
+app.post("/userdata/userinfo", async (req, res) => {
+  // ..read user information
+  const userData = req.body;
+  console.log('Received user data:', userData);
+
+  // You can add your logic here
+  res.status(200).json({ message: "Store data received", data: userData });
+
+});
 // ..read shop information
 app.get("/api/store/info", async (req, res) => {
   let storeInfo = await shopify.api.rest.Shop.all({
