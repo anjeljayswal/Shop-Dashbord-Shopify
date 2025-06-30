@@ -4,6 +4,8 @@ import { readFileSync } from "fs";
 import express from "express";
 import serveStatic from "serve-static";
 import multer from "multer";
+// Add these imports if using TypeScript types in JSDoc or type annotations
+// (Removed explicit import of Request, Response as this is a JS file)
 
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
@@ -246,13 +248,28 @@ app.post("/api/product/create", async (req, res) => {
   res.status(200).send({ message: "Product created successfully" });
 });
 // DELETE A PRODUCT
-app.delete("/api/product/delete", async(req, res) => {
-  await shopify.api.rest.Product.delete({
-    session: res.locals.shopify.session,
-    id: 7281843077180,
-  });
-  res.status(200).send({Message: "Product Deleted Successfully"})
+// DELETE A PRODUCT (DYNAMIC)
+app.delete("/api/product/delete", async (req, res) => {
+  const { productId } = req.body;
+
+  if (!productId) {
+    res.status(400).json({ error: "Product ID is required" });
+    return;
+  }
+
+  try {
+    await shopify.api.rest.Product.delete({
+      session: res.locals.shopify.session,
+      id: productId,
+    });
+
+    res.status(200).json({ message: "Product Deleted Successfully" });
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    res.status(500).json({ error: "Failed to delete product" });
+  }
 });
+
 
 
 

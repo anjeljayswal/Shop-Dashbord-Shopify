@@ -13,7 +13,7 @@ function Products() {
   let [isModalOpen, setIsModalOpen] = useState(false);
   let [formData, setFormData] = useState({});
   let [isCreateModel, setIsCreateModel] = useState(false);
-  
+
   const defaultFormData = {
     title: "",
     body_html: "",
@@ -29,7 +29,7 @@ function Products() {
           throw new Error("Failed to fetch products");
         }
         const data = await res.json();
-        // console.log('data: ', data);
+        console.log('data: ', data);
         setProducts(data);
       } catch (err) {
         console.error("Error:", err);
@@ -111,24 +111,37 @@ function Products() {
     }
   };
 
-  let deleteHandler = async () => {
-    try {
-      let request = await fetch("/api/product/delete", {
-        method: "DELETE",
-      });
-      let response = await request.json();
-      console.log(response);
-    } catch (error) {
-      console.log(error)
+  let deleteHandler = async (productId) => {
+    if (!productId) {
+      console.error("No product ID provided for deletion.");
+      return;
     }
-  }
+    try {
+      const request = await fetch("/api/product/delete", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId }), // <-- send in body
+      });
+      const response = await request.json();
+      console.log(response);
+
+      if (request.ok) {
+        setIsModalOpen(false);
+        setProducts(prev => ({
+          ...prev,
+          data: prev.data.filter(p => p.id !== productId)
+        }));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Page fullWidth>
       <Layout>
         <Layout.Section>
           <button onClick={openCreateModal} className='button'>New <Add /></button>
-          <button onClick={deleteHandler} className='button'>Delete <Delete /></button>
         </Layout.Section>
         <Layout.Section>
           <Grid>
@@ -136,11 +149,33 @@ function Products() {
               !isLoading && products.data.map((product) => (
                 <Grid.Cell key={product.id} columnSpan={{ xs: 6, sm: 6, md: 2, lg: 4, xl: 3 }}>
                   <div className="card" onClick={() => productHandler(product.id)}>
-                    <LegacyCard sectioned>
+                    <LegacyCard sectioned >
                       <img src={product?.image?.src} alt="product media" className='product-image' />
-                      <h2 className="product-title">{product.title}</h2>
-                      <p className="product-price">INR {product.variants[0].price}</p>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <div>
+                          <h2 className="product-title">{product.title}</h2>
+                          <p className="product-price">INR {product.variants[0].price}</p>
+                        </div>
+                        <div>
+                          <button
+                            style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+                            type="button"
+                            className='button danger'
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteHandler(product.id);
+                            }}
+                          >
+                            <Delete style={{ fontSize: 18 }} />
+
+                          </button>
+                        </div>
+                      </div>
+
+
                     </LegacyCard>
+
                   </div>
                 </Grid.Cell>
               ))
@@ -182,9 +217,7 @@ function Products() {
                 imageFile={null}
                 setImageFile={() => { }}
                 submitHandler={handleCreateSubmit}
-
               />
-              
             </div>
           </div>
         )
