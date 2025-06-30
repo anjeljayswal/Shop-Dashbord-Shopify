@@ -21,24 +21,22 @@ function Products() {
     variants: [{ price: 0 }],
     image: { src: "" }
   };
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch("/api/products/all");
-        if (!res.ok) {
-          throw new Error("Failed to fetch products");
-        }
-        const data = await res.json();
-        console.log('data: ', data);
-        setProducts(data);
-      } catch (err) {
-        console.error("Error:", err);
-        setError("Unable to fetch products");
-      } finally {
-        setLoading(false);
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch("/api/products/all");
+      if (!res.ok) {
+        throw new Error("Failed to fetch products");
       }
-    };
+      const data = await res.json();
+      setProducts(data);
+    } catch (err) {
+      setError("Unable to fetch products");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchProducts();
   }, []);
 
@@ -105,6 +103,7 @@ function Products() {
       console.log("Created:", data);
       if (response.ok) {
         setIsCreateModel(false);
+        fetchProducts(); // <-- Refresh product list
       }
     } catch (error) {
       console.error(error);
@@ -161,7 +160,7 @@ function Products() {
                           <button
                             style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
                             type="button"
-                            className='button danger'
+                            // className='button danger'
                             onClick={(e) => {
                               e.stopPropagation();
                               deleteHandler(product.id);
