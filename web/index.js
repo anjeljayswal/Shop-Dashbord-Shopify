@@ -158,13 +158,29 @@ app.get("/api/collections/count", async (_req, res) => {
   res.status(200).send({ count: countData });
 });
 //reading orders  data
+// app.get("/api/orders/all", async (_req, res) => {
+//   const countData = await shopify.api.rest.Order.count({
+//     session: res.locals.shopify.session,
+//     status: "any",
+//   });
+//   console.log("countData: ", countData);
+//   res.status(200).send({ count: countData });
+// });
 app.get("/api/orders/all", async (_req, res) => {
-  const countData = await shopify.api.rest.Order.count({
-    session: res.locals.shopify.session,
-    status: "any",
-  });
-  res.status(200).send({ count: countData });
+ try {
+    const orders = await shopify.api.rest.Order.all({
+      session: res.locals.shopify.session,
+      status: "any",
+      limit: 50, // Shopify's default limit per page
+    });
+
+    res.status(200).send({ data: orders });
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).send({ error: "Failed to fetch orders" });
+  }
 });
+
 
 
 

@@ -12,7 +12,7 @@ export default function HomePage() {
   const [orders, setOrders] = useState(0);
   const [fullFilled, setFullFilled] = useState(0);
   const [remains, setRemains] = useState(0);
-  
+
 
   async function fetchProduct() {
     // Fetch data or perform side effects here
@@ -37,19 +37,36 @@ export default function HomePage() {
       console.error("Error fetching collection count:", error);
     }
   }
+  // async function fetchOrders() {
+  //   // Fetch data or perform side effects here
+  //   try {
+  //     const request = await fetch("/api/orders/all");
+  //     let response = await request.json();
+  //     console.log("Orders response:", response);
+  //     setOrders( response.data.length);
+  //     let fulfillOrders = response.data.filter(order => order.fulfillment_status === 'fulfilled');
+  //     setFullFilled(fulfillOrders.length);
+  //     setRemains(response.data.length - fulfillOrders.length);
+  //   } catch (error) {
+  //     console.error("Error fetching order count:", error);
+  //   }
+  // }
   async function fetchOrders() {
-    // Fetch data or perform side effects here
-    try {
-      const request = await fetch("/api/orders/all");
-      let response = await request.json();
-      setOrders(response.data.length);
-      let fulfillOrders = response.data.filter(order => order.fulfillment_status === 'fulfilled');
-      setFullFilled(fulfillOrders.length);
-      setRemains(response.data.length - fulfillOrders.length);
-    } catch (error) {
-      console.error("Error fetching order count:", error);
-    }
+  try {
+    const request = await fetch("/api/orders/all");
+    let response = await request.json();
+    console.log("Orders response:", response);
+
+    const allOrders = response.data.data || []; // Fallback to empty array
+    setOrders(allOrders.length);
+
+    const fulfillOrders = allOrders.filter(order => order.fulfillment_status === 'fulfilled');
+    setFullFilled(fulfillOrders.length);
+    setRemains(allOrders.length - fulfillOrders.length);
+  } catch (error) {
+    console.error("Error fetching order count:", error);
   }
+}
   console.log("Product count:", product);
   console.log("Collection count:", collection);
   console.log("Order count:", orders);
@@ -71,7 +88,7 @@ export default function HomePage() {
         <div className="cards-section">
           <Layout>
             <Card title="Total Order" data={orders} orderCard />
-            <Card title="Fulfilled Order" data={fullFilled} fulfillCard/>
+            <Card title="Fulfilled Order" data={fullFilled} fulfillCard />
             <Card title="Remains Order" data={remains} remainCard />
             <Card title="Total Product" data={product} productsCard />
             <Card title="Total Collection" data={collection.count} collectionCard />
