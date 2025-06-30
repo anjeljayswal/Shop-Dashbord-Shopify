@@ -3,7 +3,7 @@
 client_id = "f4dc4a34b585131c3f317006c7189853"
 name = "shop-dashboard"
 handle = "shop-dashboard-24"
-application_url = "https://actual-estimated-barcelona-covers.trycloudflare.com"
+application_url = "https://nj-am-papers-aruba.trycloudflare.com"
 embedded = true
 
 [build]
@@ -18,7 +18,7 @@ api_version = "2025-04"
 scopes = "write_products,read_products,read_orders"
 
 [auth]
-redirect_urls = ["https://actual-estimated-barcelona-covers.trycloudflare.com/auth/callback", "https://actual-estimated-barcelona-covers.trycloudflare.com/auth/shopify/callback", "https://actual-estimated-barcelona-covers.trycloudflare.com/api/auth/callback"]
+redirect_urls = ["https://nj-am-papers-aruba.trycloudflare.com/auth/callback", "https://nj-am-papers-aruba.trycloudflare.com/auth/shopify/callback", "https://nj-am-papers-aruba.trycloudflare.com/api/auth/callback"]
 
 [pos]
 embedded = false

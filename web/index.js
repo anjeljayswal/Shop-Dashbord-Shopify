@@ -3,6 +3,7 @@ import { join } from "path";
 import { readFileSync } from "fs";
 import express from "express";
 import serveStatic from "serve-static";
+import multer from "multer";
 
 import shopify from "./shopify.js";
 import productCreator from "./product-creator.js";
@@ -40,6 +41,9 @@ app.post(
 app.use("/api/*", shopify.validateAuthenticatedSession());
 app.use("/userdata/*", authenticateUser);
 app.use(express.json());
+// const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
+
 // 1. connection to mongodb
 // 2 create a schema 
 // 3 models
@@ -128,7 +132,7 @@ app.get("/api/store/info", async (req, res) => {
 
 
 
-app.get("/api/products/count", async (_req, res) => {
+app.get("/api/product/count", async (_req, res) => {
   const client = new shopify.api.clients.Graphql({
     session: res.locals.shopify.session,
   });
@@ -159,6 +163,98 @@ app.get("/api/orders/all", async (_req, res) => {
   });
   res.status(200).send({ count: countData });
 });
+
+
+
+
+// READ ALL PRODUCTS
+app.get("/api/products/all", async(req, res) => {
+  let allProducts = await shopify.api.rest.Product.all({
+    session: res.locals.shopify.session,
+  });
+  res.status(200).send(allProducts);
+});
+
+// UPDATE A PRODUCT
+app.put("/api/product/update", async(req, res) => {
+  let getProduct = req.body;
+  let updateProduct = new shopify.api.rest.Product({
+    session: res.locals.shopify.session,
+  });
+  updateProduct.id = getProduct.id;
+  updateProduct.title = getProduct.title;
+  await updateProduct.save({
+    update: true,
+  });
+  res.status(200).send({Message: "Product Updated Successfully"})
+});
+
+// CREATE A NEW PRODUCT
+// app.post("/api/product/create", async(req, res) => {
+//   let newProduct = new shopify.api.rest.Product({
+//     session: res.locals.shopify.session,
+//   });
+//   newProduct.title = "Men New Style Shoe";
+//   newProduct.body_html = "Men new style show latest design";
+//   newProduct.varndor = "al-janat-demo";
+//   newProduct.images = [{
+//     src: "https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+//   }];
+//   await newProduct.save({
+//     update: true,
+//   });
+//   res.status(200).send({Message: "Product created Successfully"});
+// });
+// const upload = multer({ storage: multer.memoryStorage() });
+
+app.post("/api/upload-image", upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file || !req.file.buffer) {
+      res.status(400).send({ error: "No image file uploaded" });
+      return;
+    }
+    const imageBuffer = req.file.buffer;
+
+    const image = new shopify.api.rest.Image({ session: res.locals.shopify.session });
+    image.product_id = null; // Optional if not attached to a product yet
+    image.attachment = imageBuffer.toString('base64');
+
+    await image.save();
+
+    res.status(200).json({ imageUrl: image.src });
+  } catch (err) {
+    console.error("Image Upload Error:", err);
+    res.status(500).send({ error: "Failed to upload image" });
+  }
+});
+
+app.post("/api/product/create", async (req, res) => {
+  const data = req.body;
+
+  const newProduct = new shopify.api.rest.Product({
+    session: res.locals.shopify.session,
+  });
+
+  newProduct.title = data.title;
+  newProduct.body_html = data.body_html;
+  newProduct.handle = data.handle;
+  newProduct.vendor = "al-janat-demo"; // optional or pass via body
+  newProduct.images = [{ src: data.image?.src }];
+  newProduct.variants = [{ price: data.variants[0].price }];
+
+  await newProduct.save({ update: true });
+  res.status(200).send({ message: "Product created successfully" });
+});
+// DELETE A PRODUCT
+app.delete("/api/product/delete", async(req, res) => {
+  await shopify.api.rest.Product.delete({
+    session: res.locals.shopify.session,
+    id: 7281843077180,
+  });
+  res.status(200).send({Message: "Product Deleted Successfully"})
+});
+
+
 
 
 app.post("/api/products", async (_req, res) => {

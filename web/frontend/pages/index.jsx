@@ -17,7 +17,7 @@ export default function HomePage() {
   async function fetchProduct() {
     // Fetch data or perform side effects here
     try {
-      const request = await fetch("/api/products/count");
+      const request = await fetch("/api/product/count");
       let response = await request.json();
       setProduct(response.count);
       console.log("Product count:", response.count);
