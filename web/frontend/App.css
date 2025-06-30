@@ -273,3 +273,44 @@ a.active {
     gap: 10px;
 }
 /* PRODUCT PAGE STYLE END */
+
+/* order-details  */
+
+.order-stats-container {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.order-stat-card {
+  flex: 1 1 30%;
+  background-color: #f9fafb;
+  padding: 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.order-stat-card:hover {
+  transform: scale(1.02);
+}
+
+.order-stat-card h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.order-stat-card.all {
+  border-left: 6px solid #008170;
+}
+
+.order-stat-card.fulfilled {
+  border-left: 6px solid #81BF37;
+}
+
+.order-stat-card.remaining {
+  border-left: 6px solid #FF6B6B;
+}

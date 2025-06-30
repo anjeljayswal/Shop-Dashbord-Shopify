@@ -12,7 +12,7 @@ export default function HomePage() {
   const [orders, setOrders] = useState(0);
   const [fullFilled, setFullFilled] = useState(0);
   const [remains, setRemains] = useState(0);
-
+  const [orderDetails, setOrderDetails] = useState([]);
 
   async function fetchProduct() {
     // Fetch data or perform side effects here
@@ -52,21 +52,22 @@ export default function HomePage() {
   //   }
   // }
   async function fetchOrders() {
-  try {
-    const request = await fetch("/api/orders/all");
-    let response = await request.json();
-    console.log("Orders response:", response);
+    try {
+      const request = await fetch("/api/orders/all");
+      let response = await request.json();
+      console.log("Orders response:", response);
 
-    const allOrders = response.data.data || []; // Fallback to empty array
-    setOrders(allOrders.length);
+      const allOrders = response.data.data || []; // Fallback to empty array
+      setOrderDetails(allOrders);
+      setOrders(allOrders.length);
 
-    const fulfillOrders = allOrders.filter(order => order.fulfillment_status === 'fulfilled');
-    setFullFilled(fulfillOrders.length);
-    setRemains(allOrders.length - fulfillOrders.length);
-  } catch (error) {
-    console.error("Error fetching order count:", error);
+      const fulfillOrders = allOrders.filter(order => order.fulfillment_status === 'fulfilled');
+      setFullFilled(fulfillOrders.length);
+      setRemains(allOrders.length - fulfillOrders.length);
+    } catch (error) {
+      console.error("Error fetching order count:", error);
+    }
   }
-}
   console.log("Product count:", product);
   console.log("Collection count:", collection);
   console.log("Order count:", orders);
@@ -95,7 +96,10 @@ export default function HomePage() {
           </Layout>
         </div>
         <div className="order-details-section">
-          <OrderDetails />
+          <OrderDetails
+            orders={orderDetails}
+           
+          />
         </div>
       </div>
     </Page>
