@@ -1,63 +1,65 @@
 // @ts-check
 import { DiscountApplicationStrategy } from "../generated/api";
 
-// /**
-//  * @typedef {import("../generated/api").RunInput} RunInput
-//  * @typedef {import("../generated/api").FunctionRunResult} FunctionRunResult
-//  */
 
-// /**
-//  * @type {FunctionRunResult}
-//  */
 const EMPTY_DISCOUNT = {
   discountApplicationStrategy: DiscountApplicationStrategy.First,
   discounts: [],
 };
 
-// /**
-//  * @param {RunInput} input
-//  * @returns {FunctionRunResult}
-//  */
-// export function run(input) {
-//   const configuration = JSON.parse(
-//     input?.discountNode?.metafield?.value ?? "{}"
-//   );
 
-//   return EMPTY_DISCOUNT;
-// };
 export function run(input) {
-  const freeVariantId = 'gid://shopify/ProductVariant/51273050816693';
-  const cartTotalThreshold = 75;
+  const discounts = [];
 
-  const cartTotal = input.cart.lines.reduce((total, line) => {
-    // Exclude the free gift from the cart total
-    if (line.merchandise.id !== freeVariantId && line.cost?.totalAmount?.amount) {
-      return total + parseFloat(line.cost.totalAmount.amount); // Already includes quantity
+  for (const line of input.cart.lines) {
+    const tags = line.merchandise.product.tags || [];
+    let freeQty = 0;
+    let rule = null;
+
+    if (tags.includes("BOGO")) {
+      // Buy 1 Get 1 Free: For every 2, 1 is free
+      freeQty = Math.floor(line.quantity / 2);
+      rule = "BOGO";
+    } else if (tags.includes("BUY3GET1")) {
+      // Buy 3 Get 1 Free: For every 4, 1 is free
+      freeQty = Math.floor(line.quantity / 4);
+      rule = "BUY3GET1";
+    } else if (tags.includes("BUY4GET2")) {
+      // Buy 4 Get 2 Free: For every 6, 2 are free
+      freeQty = Math.floor(line.quantity / 6) * 2;
+      rule = "BUY4GET2";
     }
-    return total;
-  }, 0);
 
-  if (cartTotal < cartTotalThreshold) {
-    return EMPTY_DISCOUNT;
+    if (freeQty > 0) {
+      discounts.push({
+        targets: [
+          {
+            productVariant: {
+              id: line.merchandise.id,
+            },
+            quantity: freeQty,
+          },
+        ],
+        value: {
+          percentage: {
+            value: 100,
+          },
+        },
+        message:
+          rule === "BOGO"
+            ? "Buy 1 Get 1 Free"
+            : rule === "BUY3GET1"
+            ? "Buy 3 Get 1 Free"
+            : rule === "BUY4GET2"
+            ? "Buy 4 Get 2 Free"
+            : "Free item",
+      });
+    }
+    console.log("Product ID:", line.merchandise.id);
+console.log("Tags:", tags);
+console.log("Applied rule:", rule);
+console.log("Free quantity calculated:", freeQty);
   }
-
-  const discounts = input.cart.lines
-    .filter(line => line.merchandise.id === freeVariantId)
-    .map(line => ({
-      targets: [
-        {
-          productVariant: {
-            id: line.merchandise.id,
-          }
-        }
-      ],
-      value: {
-        percentage: {
-          value: 100
-        }
-      },
-      message: 'Free Gift',
-    }));
 
   if (discounts.length === 0) {
     return EMPTY_DISCOUNT;
@@ -65,6 +67,6 @@ export function run(input) {
 
   return {
     discountApplicationStrategy: DiscountApplicationStrategy.First,
-    discounts: discounts,
+    discounts,
   };
 }

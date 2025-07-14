@@ -1,0 +1,26 @@
+<div class="bogo-badge">🎁 Buy 1 Get 1 Free</div>
+{% if product.tags contains "bogo" %}
+  <script src="{{ 'bogo.js' | asset_url }}" defer></script>
+  <div class="bogo-badge">🎁 Buy 1 Get 1 Free</div>
+{% endif %}
+{% assign bogo_products = "51273050816693,51273050816693" | split: "," %}
+{% if bogo_products contains product.id %}
+  <style>
+    .bogo-badge {
+      background: #ffe200;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: inline-block;
+      margin-top: 10px;
+    }
+  </style>
+{% endif %}
+
+{% schema %}
+{
+  "name": "BOGO Script Injector",
+  "target": "section",
+  "settings": []
+}
+{% endschema %}

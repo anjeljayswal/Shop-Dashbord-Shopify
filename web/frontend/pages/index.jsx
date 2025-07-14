@@ -84,7 +84,7 @@ export default function HomePage() {
     <Page fullWidth>
       <div className="home-section">
         <div className="graphs-section">
-          <Ordersgraphs />
+          {/* <Ordersgraphs /> */}
         </div>
         <div className="cards-section">
           <Layout>

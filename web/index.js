@@ -259,7 +259,10 @@ app.post("/api/product/create", async (req, res) => {
   newProduct.vendor = "al-janat-demo"; // optional or pass via body
   newProduct.images = [{ src: data.image?.src }];
   newProduct.variants = [{ price: data.variants[0].price }];
-
+ // Add BOGO tag if requested
+  if (data.isBogo) {
+    newProduct.tags = "BOGO";
+  }
   await newProduct.save({ update: true });
   res.status(200).send({ message: "Product created successfully" });
 });

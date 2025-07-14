@@ -126,7 +126,21 @@ const ProductForm = ({
           onChange={valueHandler}
           placeholder="Handle"
         />
-
+        {/* BOGO Checkbox */}
+        <div style={{ display: "flex", flexDirection:"row", alignItems: "center", gap: "8px", margin: "" }}>
+          <input
+            type="checkbox"
+            name="isBogo"
+            checked={!!formData.isBogo}
+            onChange={e =>
+              setFormData(prev => ({
+                ...prev,
+                isBogo: e.target.checked,
+              }))
+            }
+          />
+          Buy One Get One (BOGO)
+        </div>
         <input
           className="button"
           type="submit"

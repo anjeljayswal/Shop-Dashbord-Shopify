@@ -136,6 +136,8 @@ function Products() {
     }
   };
 
+  console.log("Products: ", products);
+
   return (
     <Page fullWidth>
       <Layout>
@@ -150,7 +152,10 @@ function Products() {
                   <div className="card" onClick={() => productHandler(product.id)}>
                     <LegacyCard sectioned >
                       <img src={product?.image?.src} alt="product media" className='product-image' />
-
+                      {/* BOGO Tag */}
+                      {product.tags && product.tags.includes("BOGO") && (
+                        <span className="bogo-tag">Buy 1 Get 1 Free</span>
+                      )}
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <div>
                           <h2 className="product-title">{product.title}</h2>
