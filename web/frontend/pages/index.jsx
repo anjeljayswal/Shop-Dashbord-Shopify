@@ -74,12 +74,15 @@ export default function HomePage() {
   console.log("Fulfilled count:", fullFilled);
   console.log("Remains count:", remains);
 
-  useEffect(async () => {
-    // Fetch data or perform side effects here
-    fetchProduct();
-    fetchCollection();
-    fetchOrders();
-  }, []);
+  useEffect(() => {
+  const fetchData = async () => {
+    await fetchProduct();
+    await fetchCollection();
+    await fetchOrders();
+  };
+
+  fetchData();
+}, []);
   return (
     <Page fullWidth>
       <div className="home-section">
