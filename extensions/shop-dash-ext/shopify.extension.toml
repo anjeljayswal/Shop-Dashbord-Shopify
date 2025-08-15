@@ -1,3 +1,0 @@
-name = "shop-dash-ext"
-type = "theme_app_extension"
-extension_points = ["theme:head"]
